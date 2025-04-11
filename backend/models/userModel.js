@@ -14,7 +14,21 @@ const userSchema = new mongoose.Schema({
         type: String, 
         enum: ['local', 'google'],
         default: 'local'
-    }
+    },
+    favoriteGenres: [{
+        type: String,
+        enum: [
+            'Action', 'Adventure', 'Animation', 'Comedy', 'Crime',
+            'Documentary', 'Drama', 'Family', 'Fantasy', 'History',
+            'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction',
+            'TV Movie', 'Thriller', 'War', 'Western'
+        ]
+    }],
+    favoriteMovies: [{
+        movieId: { type: String, required: true },
+        movieName: { type: String, required: true }
+    }],
+    preferredLanguages: [{ type: String }]
 });
 
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);
