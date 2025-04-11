@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base scrollbar settings - Apply to html only */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #444 #111;
+}
+
+/* Custom scrollbar for all scrollable elements except those with .no-scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+:not(.no-scrollbar)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:not(.no-scrollbar)::-webkit-scrollbar-track {
+  background: #111;
+}
+
+:not(.no-scrollbar)::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 8px;
+}
+
+:not(.no-scrollbar)::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Utility class to hide scrollbars */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  overflow: -moz-scrollbars-none; /* Firefox (old) */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Basic setup - this prevents double scrollbars */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  box-sizing: border-box;
+  background-color: #0D0D0D;
+  color: white;
+  font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow: hidden; /* Prevent body scrollbar */
+}
+
+/* Root element - only this should scroll */
+#root {
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Main background effect */
+main {
+  position: relative;
+  transition: background-image 0.5s ease-in-out;
+}
+
+main::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(0.2);
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, background-image 0.5s ease-in-out;
+}
+
+main.active::before {
+  opacity: 1;
+}
+
+main::before {
+  background-image: var(--background-image);
+}
+
+/* Carousel styles */
+.container-carousel {
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 30px;
+  margin-top: 0;
+  padding-top: 0;
+  height: 80vh;
+  min-height: 500px;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.container-carousel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.container-carousel .flex.aspect-video {
+  height: 80vh;
+  min-height: 500px;
+  max-height: 700px;
+}
+
+.container-carousel .relative.flex-shrink-0 {
+  height: 80vh;
+  min-height: 500px;
+  max-height: 700px;
+}
+
+/* Make sure carousel slides are full height */
+.container-carousel img {
+  height: 100%;
+  object-position: center 15%;
+}
+
+/* Background image transition */
+main.active {
+  --background-image: '';
+  background-image: var(--background-image);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+main.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(13,13,13,0.7) 0%, rgba(13,13,13,0.9) 50%, #0d0d0d 100%);
+  z-index: -1;
+}
+
+/* Footer animations */
+.footer {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+  flex-shrink: 0;
+}
+
+.footer.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.footer-item {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease-out;
+}
+
+.footer.animated .footer-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.footer.animated .footer-item:nth-child(1) {
+  transition-delay: 0.2s;
+}
+
+.footer.animated .footer-item:nth-child(2) {
+  transition-delay: 0.3s;
+}
+
+.footer.animated .footer-item:nth-child(3) {
+  transition-delay: 0.4s;
+}
+
+.footer.animated .footer-item:nth-child(4) {
+  transition-delay: 0.5s;
+}
+
+.footer.animated .footer-item:nth-child(5) {
+  transition-delay: 0.6s;
+}
+
+.footer.animated .footer-icon {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.5s ease-out;
+}
+
+.footer.animated .footer-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.footer.animated .footer-icon:nth-child(1) {
+  transition-delay: 0.5s;
+}
+
+.footer.animated .footer-icon:nth-child(2) {
+  transition-delay: 0.6s;
+}
+
+.footer.animated .footer-icon:nth-child(3) {
+  transition-delay: 0.7s;
+}
+
+.footer.animated .footer-icon:nth-child(4) {
+  transition-delay: 0.8s;
+}
+
+/* Main Carousel Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .footer .flex {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .footer .flex > div {
+    width: 100%;
+    align-items: center;
+  }
+  
+  .container-carousel .absolute.top-1\/2.left-\[5\%\] {
+    left: 2%;
+    max-width: 80%;
+  }
+  
+  .container-carousel .text-5xl {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .slide-content {
+    bottom: 5%;
+    width: 80%;
+    max-width: 400px;
+  }
+
+  .slide-title {
+    font-size: 2.5rem;
+  }
+
+  .slide-description {
+    -webkit-line-clamp: 3;
+  }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Fixed header positioning */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%);
+}

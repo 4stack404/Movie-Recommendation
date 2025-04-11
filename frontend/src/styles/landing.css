@@ -1,0 +1,139 @@
+/* Landing Page Styles */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  background-color: #0D0D0D;
+  color: white;
+}
+
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.landing-page main {
+  flex: 1;
+}
+
+/* Hero Section */
+.hero {
+  height: 100vh;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.6)), url('https://wallpapers.com/images/hd/horror-movie-collage-1920-x-1080-x5qzkf99dsj4b8w7.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 150px;
+}
+
+.hero-con {
+  max-width: 600px;
+}
+
+.hero-p {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  animation: fadeInUp 1s ease;
+}
+
+.hero-s {
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  display: block;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1.2s ease;
+}
+
+.hero-btn {
+  display: flex;
+  gap: 20px;
+  animation: fadeInUp 1.4s ease;
+}
+
+#hero-btn {
+  padding: 12px 30px;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.explore {
+  background-color: #E50914;
+  color: white;
+  border: none;
+}
+
+.explore:hover {
+  background-color: #f82e37;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+}
+
+.signin {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.signin:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .hero {
+    padding-left: 50px;
+    padding-right: 50px;
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .hero-p {
+    font-size: 2.5rem;
+  }
+  
+  .hero-s {
+    font-size: 2rem;
+  }
+  
+  .hero-btn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .hero-p {
+    font-size: 2rem;
+  }
+  
+  .hero-s {
+    font-size: 1.5rem;
+  }
+  
+  #hero-btn {
+    padding: 10px 20px;
+  }
+} 
