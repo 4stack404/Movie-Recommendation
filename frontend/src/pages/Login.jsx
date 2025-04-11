@@ -6,7 +6,7 @@ import { assets } from "../assets/assets";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setIsLoggedin, backendUrl, } = useContext(AppContent);
+  const { setIsLoggedin } = useContext(AppContent);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +16,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+
       const body = isLogin ? { email, password } : { name, email, password };
 
       const res = await fetch(endpoint, {
@@ -26,13 +27,12 @@ const Login = () => {
         body: JSON.stringify(body),
         credentials: "include",
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || (isLogin ? 'Login failed' : 'Registration failed'));
-      }
-
+      
       const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.message || (isLogin ? 'Login failed' : 'Registration failed'));
+      }
 
       if (data.success) {
         setIsLoggedin(true);

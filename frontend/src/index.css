@@ -44,6 +44,23 @@ html {
   height: 0;
 }
 
+/* Genre row styling - prevent vertical scrollbars */
+.genre-row {
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.genre-row::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+/* Poster fallback styling */
+.poster-fallback {
+  display: flex !important;
+}
+
 /* Basic setup - this prevents double scrollbars */
 html, body {
   margin: 0;

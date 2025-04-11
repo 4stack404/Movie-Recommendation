@@ -7,7 +7,9 @@ import Login from './pages/Login';
 import EmailVerify from './pages/EmailVerify';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
-import FavoriteMovies from './pages/FavoriteMovies';
+import Explore from './pages/Explore';
+import GenreDetail from './pages/GenreDetail';
+import MovieDetail from './pages/MovieDetail';
 
 function App() {
   return (
@@ -20,7 +22,9 @@ function App() {
         <Route path="/email-verify" element={<EmailVerify />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
-        <Route path="/favorite-movies" element={<FavoriteMovies />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/genre/:genreId" element={<GenreDetail />} />
+        <Route path="/movie/:movieId" element={<MovieDetail />} />
       </Routes>
    
   );

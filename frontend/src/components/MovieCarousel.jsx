@@ -61,7 +61,7 @@ const MovieCarousel = ({ movies, onAddToWatchlist }) => {
     <div className="relative w-full overflow-hidden">
       {/* Carousel slides */}
       <div 
-        className="flex transition-transform duration-500 ease-in-out h-[600px] sm:h-[500px] md:h-[600px] lg:h-[700px]"
+        className="flex transition-transform duration-500 ease-in-out h-[85vh] sm:h-[85vh] md:h-[90vh] lg:h-[90vh]"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {movies.map((movie, index) => (
@@ -71,7 +71,11 @@ const MovieCarousel = ({ movies, onAddToWatchlist }) => {
               <img 
                 src={movie.backdrop_path || getBackdropPath(movie) || `https://image.tmdb.org/t/p/original/56v2KjBlU4XaOv9rVYEQypROD7P.jpg`}
                 alt={movie.title || movie.Title || ''} 
-                className="w-full h-full object-cover opacity-60"
+                className="w-full h-full object-cover object-[center_35%] opacity-60"
+                onError={(e) => {
+                  e.target.onerror = null; 
+                  e.target.src = 'https://image.tmdb.org/t/p/original/56v2KjBlU4XaOv9rVYEQypROD7P.jpg';
+                }}
               />
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
@@ -83,10 +87,10 @@ const MovieCarousel = ({ movies, onAddToWatchlist }) => {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white">{movie.title || movie.Title}</h1>
                 
                 <div className="flex items-center gap-3 mb-4">
-                  {movie.rating > 0 && (
+                  {movie.rating && (
                     <span className="flex items-center gap-1 bg-yellow-500 text-black px-2 py-1 rounded-md font-semibold">
                       <i className="fa-solid fa-star"></i> 
-                      {movie.rating.toFixed(1)}
+                      {typeof movie.rating === 'number' ? movie.rating.toFixed(1) : movie.rating}
                     </span>
                   )}
                   
