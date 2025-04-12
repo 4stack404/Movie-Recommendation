@@ -26,7 +26,12 @@ const userSchema = new mongoose.Schema({
     }],
     favoriteMovies: [{
         movieId: { type: String, required: true },
-        movieName: { type: String, required: true }
+        movieName: { type: String, required: true },
+        poster_path: { type: String },
+        release_date: { type: String },
+        overview: { type: String },
+        vote_average: { type: Number },
+        genres: [{ type: String }]
     }],
     preferredLanguages: [{ type: String }]
 });

@@ -83,10 +83,10 @@ const MovieCarousel = ({ movies, onAddToWatchlist }) => {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white">{movie.title || movie.Title}</h1>
                 
                 <div className="flex items-center gap-3 mb-4">
-                  {movie.rating > 0 && (
+                  {movie.rating && (
                     <span className="flex items-center gap-1 bg-yellow-500 text-black px-2 py-1 rounded-md font-semibold">
                       <i className="fa-solid fa-star"></i> 
-                      {movie.rating.toFixed(1)}
+                      {typeof movie.rating === 'number' ? movie.rating.toFixed(1) : movie.rating}
                     </span>
                   )}
                   

@@ -134,7 +134,12 @@ const FavoriteMovies = () => {
         body: JSON.stringify({
           favoriteMovies: selectedMovies.map(movie => ({
             movieId: movie.id.toString(),
-            movieName: movie.title
+            movieName: movie.title,
+            poster_path: movie.poster_path,
+            release_date: movie.release_date,
+            overview: movie.overview,
+            vote_average: movie.vote_average,
+            genres: movie.genres
           })),
           favoriteGenres: selectedGenres,
           preferredLanguages: selectedLanguages
