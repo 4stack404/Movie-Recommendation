@@ -1,24 +1,26 @@
 import jwt from "jsonwebtoken";
+import userModel from '../models/userModel.js';
 
 const userAuth = async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1]; // Support both cookies & headers
-
-    if (!token) {
-        return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        if (decoded.id) {
-            req.user = { _id: decoded.id };
-        } else {
-            return res.status(401).json({ success: false, message: "Unauthorized" });
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'Authentication required' });
         }
 
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await userModel.findById(decoded.id);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        req.user = user;
         next();
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
+        console.error('Auth middleware error:', error);
+        res.status(401).json({ success: false, message: 'Invalid or expired token' });
     }
 };
 

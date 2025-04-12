@@ -1,13 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { toast } from 'react-hot-toast';
 
 const MovieDetail = () => {
   const { movieId } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [movie, setMovie] = useState(null);
   const [similarMovies, setSimilarMovies] = useState([]);
+  const [isAddingToWatchlist, setIsAddingToWatchlist] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/user/data', {
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const data = await response.json();
+        setIsAuthenticated(data.success);
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -126,9 +156,61 @@ const MovieDetail = () => {
     </Link>
   );
 
-  const addToWatchlist = () => {
+  const addToWatchlist = async () => {
     if (!movie) return;
-    alert(`Added ${movie.title} to watchlist`);
+    
+    if (!isAuthenticated) {
+      toast.error('Please login to add movies to your watchlist');
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      setIsAddingToWatchlist(true);
+      const response = await fetch('/api/user/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          movieId: movie.id.toString(),
+          title: movie.title,
+          poster_path: movie.poster_path || '',
+          backdrop_path: movie.backdrop_path || '',
+          release_date: movie.release_date || '',
+          overview: movie.overview || '',
+          vote_average: movie.vote_average || 0,
+          genres: Array.isArray(movie.genres) ? movie.genres : [],
+          runtime: movie.runtime || 0,
+          original_language: movie.original_language || ''
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          setIsAuthenticated(false);
+          toast.error('Please login to add movies to your watchlist');
+          navigate('/login');
+          return;
+        }
+        throw new Error(errorData.message || 'Failed to add to watchlist');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success('Added to your watchlist');
+      } else {
+        toast.error(data.message || 'Failed to add to watchlist');
+      }
+    } catch (error) {
+      console.error('Error adding to watchlist:', error);
+      toast.error(error.message || 'Failed to add to watchlist');
+    } finally {
+      setIsAddingToWatchlist(false);
+    }
   };
 
   if (loading) {
@@ -210,9 +292,16 @@ const MovieDetail = () => {
               
               <button 
                 onClick={addToWatchlist}
-                className="bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-md py-3 px-4 flex items-center justify-center transition-colors"
+                disabled={isAddingToWatchlist}
+                className="bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-md py-2 px-3 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <i className="fas fa-plus mr-2"></i> Add to List
+                {isAddingToWatchlist ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <i className="fas fa-plus mr-2"></i> Add to List
+                  </>
+                )}
               </button>
             </div>
           </div>

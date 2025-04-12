@@ -12,10 +12,22 @@ import Explore from './pages/Explore';
 import GenreDetail from './pages/GenreDetail';
 import MovieDetail from './pages/MovieDetail';
 import Profile from './pages/Profile';
+import MyList from './pages/MyList';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    
+    <>
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+        }}
+      />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="/login" element={<LoginPage />} /> */}
@@ -29,8 +41,9 @@ function App() {
         <Route path="/genre/:genreId" element={<GenreDetail />} />
         <Route path="/movie/:movieId" element={<MovieDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/watchlist" element={<MyList />} />
       </Routes>
-   
+    </>
   );
 }
 

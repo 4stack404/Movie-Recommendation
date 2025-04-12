@@ -184,3 +184,96 @@ export const removeFromFavorites = async (req, res) => {
         res.status(500).json({ message: 'Error removing movie from favorites' });
     }
 };
+
+// Get user's watchlist
+export const getWatchlist = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({ success: true, watchlist: user.watchlist });
+    } catch (error) {
+        console.error('Error getting watchlist:', error);
+        res.status(500).json({ success: false, message: 'Failed to get watchlist' });
+    }
+};
+
+// Add movie to watchlist
+export const addToWatchlist = async (req, res) => {
+    try {
+        const {
+            movieId,
+            title,
+            poster_path,
+            backdrop_path,
+            release_date,
+            overview,
+            vote_average,
+            genres,
+            runtime,
+            original_language
+        } = req.body;
+
+        if (!movieId || !title) {
+            return res.status(400).json({ success: false, message: 'Movie ID and title are required' });
+        }
+
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Check if movie is already in watchlist
+        const movieExists = user.watchlist.some(movie => movie.movieId === movieId);
+        if (movieExists) {
+            return res.status(400).json({ success: false, message: 'Movie already in watchlist' });
+        }
+
+        // Add to watchlist
+        user.watchlist.push({
+            movieId,
+            title,
+            poster_path,
+            backdrop_path,
+            release_date,
+            overview,
+            vote_average,
+            genres,
+            runtime,
+            original_language,
+            addedAt: new Date()
+        });
+
+        await user.save();
+        res.status(200).json({ success: true, message: 'Movie added to watchlist' });
+    } catch (error) {
+        console.error('Error adding to watchlist:', error);
+        res.status(500).json({ success: false, message: 'Failed to add movie to watchlist' });
+    }
+};
+
+// Remove movie from watchlist
+export const removeFromWatchlist = async (req, res) => {
+    try {
+        const { movieId } = req.params;
+        if (!movieId) {
+            return res.status(400).json({ success: false, message: 'Movie ID is required' });
+        }
+
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Remove movie from watchlist
+        user.watchlist = user.watchlist.filter(movie => movie.movieId !== movieId);
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Movie removed from watchlist' });
+    } catch (error) {
+        console.error('Error removing from watchlist:', error);
+        res.status(500).json({ success: false, message: 'Failed to remove movie from watchlist' });
+    }
+};

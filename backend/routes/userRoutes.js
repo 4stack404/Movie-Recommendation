@@ -1,6 +1,15 @@
 import express from 'express';
 import userAuth from '../middleware/userAuth.js';
-import { getUserData, updateUserPreferences, getFavoriteMovies, addToFavorites, removeFromFavorites } from '../controllers/userController.js';
+import { 
+    getUserData, 
+    updateUserPreferences, 
+    getFavoriteMovies, 
+    addToFavorites, 
+    removeFromFavorites,
+    getWatchlist,
+    addToWatchlist,
+    removeFromWatchlist
+} from '../controllers/userController.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
 
 const userRouter = express.Router();
@@ -12,5 +21,10 @@ userRouter.post('/update-preferences', userAuth, updateUserPreferences);
 userRouter.get('/favorite-movies', verifyToken, getFavoriteMovies);
 userRouter.post('/favorite-movies', verifyToken, addToFavorites);
 userRouter.delete('/favorite-movies/:movieId', verifyToken, removeFromFavorites);
+
+// Watchlist routes
+userRouter.get('/watchlist', verifyToken, getWatchlist);
+userRouter.post('/watchlist', verifyToken, addToWatchlist);
+userRouter.delete('/watchlist/:movieId', verifyToken, removeFromWatchlist);
 
 export default userRouter;

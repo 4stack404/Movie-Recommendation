@@ -33,6 +33,19 @@ const userSchema = new mongoose.Schema({
         vote_average: { type: Number },
         genres: [{ type: String }]
     }],
+    watchlist: [{
+        movieId: { type: String, required: true },
+        title: { type: String, required: true },
+        poster_path: { type: String },
+        backdrop_path: { type: String },
+        release_date: { type: String },
+        overview: { type: String },
+        vote_average: { type: Number },
+        genres: [{ type: String }],
+        runtime: { type: Number },
+        original_language: { type: String },
+        addedAt: { type: Date, default: Date.now }
+    }],
     preferredLanguages: [{ type: String }]
 });
 

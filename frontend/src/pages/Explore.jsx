@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MovieCarousel from '../components/MovieCarousel';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const Explore = () => {
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,8 @@ const Explore = () => {
   const [scrollDirection, setScrollDirection] = useState({});
   // Store preloaded images
   const preloadedImagesRef = useRef({});
+
+  const [addingToWatchlist, setAddingToWatchlist] = useState({});
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -200,9 +203,43 @@ const Explore = () => {
     setShowBackdrop(false);
   };
 
-  const addToWatchlist = (movie) => {
-    // This would be implemented with real functionality
-    alert(`Added ${movie.title} to watchlist`);
+  const addToWatchlist = async (movie) => {
+    if (!movie) return;
+    
+    try {
+      setAddingToWatchlist(prev => ({ ...prev, [movie.id]: true }));
+      const response = await fetch('/api/user/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          movieId: movie.id.toString(),
+          title: movie.title,
+          poster_path: movie.poster_path,
+          backdrop_path: movie.backdrop_path,
+          release_date: movie.release_date,
+          overview: movie.overview,
+          vote_average: movie.vote_average,
+          genres: movie.genres,
+          runtime: movie.runtime,
+          original_language: movie.original_language
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success(`Added ${movie.title} to your watchlist`);
+      } else {
+        toast.error(data.message || 'Failed to add to watchlist');
+      }
+    } catch (error) {
+      console.error('Error adding to watchlist:', error);
+      toast.error('Failed to add to watchlist');
+    } finally {
+      setAddingToWatchlist(prev => ({ ...prev, [movie.id]: false }));
+    }
   };
 
   // Preload images for the next batch of movies
@@ -594,9 +631,16 @@ const Explore = () => {
                       
                       <button 
                         onClick={() => addToWatchlist(movie)}
-                        className="px-4 py-2 sm:px-6 sm:py-3 bg-gray-800 hover:bg-gray-700 text-white text-sm sm:text-base font-medium rounded-md transition-colors flex items-center justify-center"
+                        disabled={addingToWatchlist[movie.id]}
+                        className="bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-md py-2 px-3 flex items-center justify-center transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <i className="fas fa-plus mr-2"></i> Add to List
+                        {addingToWatchlist[movie.id] ? (
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <>
+                            <i className="fas fa-plus mr-2"></i> Add to List
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
