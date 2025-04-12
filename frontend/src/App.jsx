@@ -13,6 +13,7 @@ import GenreDetail from './pages/GenreDetail';
 import MovieDetail from './pages/MovieDetail';
 import Profile from './pages/Profile';
 import MyList from './pages/MyList';
+import AlreadyWatched from './pages/AlreadyWatched';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
         <Route path="/movie/:movieId" element={<MovieDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/watchlist" element={<MyList />} />
+        <Route path="/already-watched" element={<AlreadyWatched />} />
       </Routes>
     </>
   );

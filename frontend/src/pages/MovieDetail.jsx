@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { toast } from 'react-hot-toast';
+import { Button, CircularProgress } from '@mui/material';
 
 const MovieDetail = () => {
   const { movieId } = useParams();
@@ -11,6 +12,8 @@ const MovieDetail = () => {
   const [movie, setMovie] = useState(null);
   const [similarMovies, setSimilarMovies] = useState([]);
   const [isAddingToWatchlist, setIsAddingToWatchlist] = useState(false);
+  const [isMarkingAsWatched, setIsMarkingAsWatched] = useState(false);
+  const [isAlreadyWatched, setIsAlreadyWatched] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -122,6 +125,89 @@ const MovieDetail = () => {
       fetchMovieDetails();
     }
   }, [movieId]);
+
+  useEffect(() => {
+    const checkIfWatched = async () => {
+      try {
+        const response = await fetch('/api/user/already-watched');
+        if (response.ok) {
+          const data = await response.json();
+          setIsAlreadyWatched(data.some(movie => movie.movieId === movieId));
+        }
+      } catch (error) {
+        console.error('Error checking watched status:', error);
+      }
+    };
+
+    if (isAuthenticated) {
+      checkIfWatched();
+    }
+  }, [movieId, isAuthenticated]);
+
+  const handleMarkAsWatched = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to mark movies as watched');
+      navigate('/login');
+      return;
+    }
+
+    setIsMarkingAsWatched(true);
+    try {
+      const response = await fetch('/api/user/already-watched', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          movieId,
+          title: movie.title,
+          poster_path: movie.poster_path,
+          backdrop_path: movie.backdrop_path,
+          release_date: movie.release_date,
+          overview: movie.overview,
+          vote_average: movie.vote_average,
+          genres: movie.genres,
+          runtime: movie.runtime,
+          original_language: movie.original_language
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('Movie marked as watched!');
+        setIsAlreadyWatched(true);
+      } else {
+        const data = await response.json();
+        toast.error(data.message || 'Failed to mark movie as watched');
+      }
+    } catch (error) {
+      console.error('Error marking movie as watched:', error);
+      toast.error('Failed to mark movie as watched');
+    } finally {
+      setIsMarkingAsWatched(false);
+    }
+  };
+
+  const handleRemoveFromWatched = async () => {
+    setIsMarkingAsWatched(true);
+    try {
+      const response = await fetch(`/api/user/already-watched/${movieId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast.success('Removed from watched movies');
+        setIsAlreadyWatched(false);
+      } else {
+        const data = await response.json();
+        toast.error(data.message || 'Failed to remove from watched movies');
+      }
+    } catch (error) {
+      console.error('Error removing movie from watched:', error);
+      toast.error('Failed to remove from watched movies');
+    } finally {
+      setIsMarkingAsWatched(false);
+    }
+  };
 
   // Movie card component for similar movies
   const SimilarMovieCard = ({ movie }) => (
@@ -284,11 +370,28 @@ const MovieDetail = () => {
             
             {/* Actions buttons */}
             <div className="flex gap-2 mt-4">
-              <button 
-                className="bg-[#E50914] hover:bg-red-700 text-white font-medium rounded-md py-3 px-4 flex-1 flex items-center justify-center transition-colors"
+              <Button
+                variant="contained"
+                color={isAlreadyWatched ? "secondary" : "primary"}
+                onClick={isAlreadyWatched ? handleRemoveFromWatched : handleMarkAsWatched}
+                disabled={isMarkingAsWatched}
+                sx={{
+                  width: '100%',
+                  marginTop: 2,
+                  backgroundColor: isAlreadyWatched ? '#e74c3c' : '#3498db',
+                  '&:hover': {
+                    backgroundColor: isAlreadyWatched ? '#c0392b' : '#2980b9',
+                  },
+                }}
               >
-                <i className="fas fa-play mr-2"></i> Watch Now
-              </button>
+                {isMarkingAsWatched ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : isAlreadyWatched ? (
+                  'Remove from Watched'
+                ) : (
+                  'Mark as Watched'
+                )}
+              </Button>
               
               <button 
                 onClick={addToWatchlist}

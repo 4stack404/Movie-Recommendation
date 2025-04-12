@@ -8,7 +8,10 @@ import {
     removeFromFavorites,
     getWatchlist,
     addToWatchlist,
-    removeFromWatchlist
+    removeFromWatchlist,
+    getAlreadyWatched,
+    addToAlreadyWatched,
+    removeFromAlreadyWatched
 } from '../controllers/userController.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
 
@@ -26,5 +29,10 @@ userRouter.delete('/favorite-movies/:movieId', verifyToken, removeFromFavorites)
 userRouter.get('/watchlist', verifyToken, getWatchlist);
 userRouter.post('/watchlist', verifyToken, addToWatchlist);
 userRouter.delete('/watchlist/:movieId', verifyToken, removeFromWatchlist);
+
+// Already watched routes
+userRouter.get('/already-watched', verifyToken, getAlreadyWatched);
+userRouter.post('/already-watched', verifyToken, addToAlreadyWatched);
+userRouter.delete('/already-watched/:movieId', verifyToken, removeFromAlreadyWatched);
 
 export default userRouter;

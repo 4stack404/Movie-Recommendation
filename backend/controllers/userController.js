@@ -277,3 +277,99 @@ export const removeFromWatchlist = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to remove movie from watchlist' });
     }
 };
+
+// Get user's already watched movies
+export const getAlreadyWatched = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({ success: true, alreadyWatched: user.alreadyWatched });
+    } catch (error) {
+        console.error('Error getting already watched movies:', error);
+        res.status(500).json({ success: false, message: 'Failed to get already watched movies' });
+    }
+};
+
+// Add movie to already watched
+export const addToAlreadyWatched = async (req, res) => {
+    try {
+        const {
+            movieId,
+            title,
+            poster_path,
+            backdrop_path,
+            release_date,
+            overview,
+            vote_average,
+            genres,
+            runtime,
+            original_language
+        } = req.body;
+
+        if (!movieId || !title) {
+            return res.status(400).json({ success: false, message: 'Movie ID and title are required' });
+        }
+
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Check if movie is already in watched list
+        const movieExists = user.alreadyWatched.some(movie => movie.movieId === movieId);
+        if (movieExists) {
+            return res.status(400).json({ success: false, message: 'Movie already marked as watched' });
+        }
+
+        // Add to already watched list
+        user.alreadyWatched.push({
+            movieId,
+            title,
+            poster_path,
+            backdrop_path,
+            release_date,
+            overview,
+            vote_average,
+            genres,
+            runtime,
+            original_language,
+            watchedAt: new Date()
+        });
+
+        // If movie is in watchlist, remove it
+        user.watchlist = user.watchlist.filter(movie => movie.movieId !== movieId);
+
+        await user.save();
+        res.status(200).json({ success: true, message: 'Movie marked as watched' });
+    } catch (error) {
+        console.error('Error adding to already watched:', error);
+        res.status(500).json({ success: false, message: 'Failed to mark movie as watched' });
+    }
+};
+
+// Remove movie from already watched
+export const removeFromAlreadyWatched = async (req, res) => {
+    try {
+        const { movieId } = req.params;
+        if (!movieId) {
+            return res.status(400).json({ success: false, message: 'Movie ID is required' });
+        }
+
+        const user = await userModel.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Remove movie from already watched
+        user.alreadyWatched = user.alreadyWatched.filter(movie => movie.movieId !== movieId);
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Movie removed from already watched' });
+    } catch (error) {
+        console.error('Error removing from already watched:', error);
+        res.status(500).json({ success: false, message: 'Failed to remove movie from already watched' });
+    }
+};
